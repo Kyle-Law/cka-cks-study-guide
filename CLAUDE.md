@@ -1,12 +1,13 @@
 # Study guides site
 
-A static, dependency-free study site in `site/`. Open `site/index.html` (CKA) or `site/cks.html` (CKS) directly in a browser, or serve with `python3 -m http.server -d site`. There is no build step, no npm and no framework.
+A static, dependency-free study site in `site/`. Open `site/index.html` (CKA), `site/cks.html` (CKS) or `site/go.html` (Go learning path) directly in a browser, or serve with `python3 -m http.server -d site`. There is no build step, no npm and no framework.
 
 ## How it works
 
 - `site/js/app.js` is a course-agnostic engine. Each page sets `window.COURSE` (title, domain `order`, home-page HTML, footer, `id`) and loads that course's data before `app.js`.
 - Data globals: `COURSE_DOMAINS` (domains → topics), `COURSE_BASICS` (per-topic intro), `COURSE_QUIZZES` (per-topic quiz), `COURSE_VISUALS` (per-topic diagram).
 - localStorage keys are `<course.id>-done`, `-quiz` and `-notes`. The theme key `cka-theme` is shared by all courses on purpose. Don't rename keys: users have saved notes under them.
+- Optional `COURSE` fields `intro`, `howto` (HTML `<li>` items), `weightLabel` (default `of exam`) and `detailsLabel` (default `Exam details`) replace the exam wording; the Go course uses them because it is a learning path, not an exam.
 - Every topic page shows: My notes → 1. Key learning points (nutshell, diagram, key ideas, collapsible "Exam details") → 2. Labs → 3. Official docs → 4. Quiz.
 
 ### Topic shape
@@ -23,7 +24,7 @@ A static, dependency-free study site in `site/`. Open `site/index.html` (CKA) or
 ```
 
 - CKA keeps these parts in separate files: `site/js/data/<domain>.js` (topics), `site/js/data/basics.js`, `site/js/quiz/<domain>.js`, `site/js/data/visuals.js`, `site/js/data/course.js`.
-- CKS keeps each topic's parts together: `site/js/cks/{setup,system,supply}.js` call `COURSE.addDomain({...})` (defined in `site/js/cks/course.js`), which moves `basics` and `quiz` into the shared maps. **Use the CKS pattern for new courses.**
+- CKS keeps each topic's parts together: `site/js/cks/{setup,system,supply}.js` call `COURSE.addDomain({...})` (defined in `site/js/cks/course.js`), which moves `basics` and `quiz` into the shared maps. **Use the CKS pattern for new courses.** The Go course follows it: `site/js/go/{course,fundamentals,interfaces,concurrency,networking,k8s,operators,visuals}.js`.
 - Inline text supports `` `code` `` and `**bold**` only (see `inline()` in `app.js`).
 
 ### Diagrams
@@ -38,18 +39,19 @@ A static, dependency-free study site in `site/`. Open `site/index.html` (CKA) or
 - See `site/js/data/visuals.js` for 27 examples. Each entry is `V[topicId] = { caption, svg: S(h, [...]) }`, assigned to `window.COURSE_VISUALS`.
 - Keep text inside boxes (about 7px per character at 12px, 8px at 14px bold). Avoid arrow labels on steep diagonals; put that information in a box sub-line instead.
 
-## Remaining work (handoff)
+## Status and remaining work
 
-1. **CKS diagrams.** Create `site/js/cks/visuals.js` with one diagram per CKS topic (26 ids, listed by `grep -o "id: '[a-z-]*'" site/js/cks/*.js`), using `SVGKIT`, and add `<script src="js/cks/visuals.js"></script>` to `site/cks.html` before `app.js`. Ideas: default-deny + allowed paths (cs-netpol), kube-bench flow (cs-cis), TLS termination at the Ingress (cs-ingress-tls), Pod → metadata IP blocked and kubelet auth (cs-metadata), checksum verify branch OK/FAILED (cs-binaries), dangerous RBAC permissions grid (ch-rbac), token mounted vs automount off (ch-sa), authn → authz → admission pipeline (ch-api), supported-version window N…N-3 (ch-upgrade), bloated vs minimal node (sh-footprint), identity layers cloud/Linux/K8s/container (sh-iam), firewall in front of the cluster (sh-network), syscall → seccomp → AppArmor → kernel (sh-kernel), privileged/baseline/restricted ladder + enforce/warn/audit (mv-pss), Secret write path with and without encryption (mv-secrets), runc vs gVisor vs Kata kernel boundary (mv-isolation), WireGuard vs sidecar mTLS (mv-mtls), image size comparison + multi-stage (sc-base), supply chain steps with risks (sc-understand), sign → registry → admission verify (sc-secure), which scanner checks what (sc-static), Falco architecture (rt-behavior), 4C layers with signal sources (rt-detect), attack phases chain (rt-attack), read-only root + emptyDirs (rt-immutable), audit policy first-match → log → jq (rt-audit).
-2. **Check CKS links.** Extract every URL from `site/js/cks/*.js` and fix any that don't return 200 (`curl -sL -o /dev/null -w '%{http_code}'`).
-3. **Go curriculum.** Add a third course, `site/go.html` + `site/js/go/*.js` (`COURSE.id = 'go'`), and add "Go" to the `.courses` switcher in all three HTML headers. Six domains = the six phases below. Use `weight` for a rough share of study time, so the cards and sidebar still show a %. The `title`/`name`/home text should talk about a learning path, not an exam. Each sub-topic is a topic with the full shape above. Labs are hands-on coding exercises (runnable `go` snippets with expected output); each phase also has its **milestone project** as a final topic (or as the last lab of the phase), with step-by-step build instructions, a reference file layout, and a "Verify" line. Refs: go.dev docs, pkg.go.dev, Go Tour, Effective Go, Kubernetes/client-go/kubebuilder docs. Quizzes test Go semantics (e.g. nil maps, slice aliasing, loop-variable capture, unbuffered channel blocking, `defer` order, interface nil-ness).
-   - Phase 1, Go Fundamentals & Idioms: syntax & types (variables, primitives, slices, maps, structs); control flow (for, if/else, switch, defer); pointers (addresses, pass-by-value vs reference); error handling (`if err != nil`, why no exceptions). Milestone: CLI tool (stdlib `flag` or spf13/cobra) that reads a YAML config file and prints it.
-   - Phase 2, Interfaces & OO patterns: methods; interfaces as implicit duck typing (io.Reader/io.Writer, how Kubernetes decouples the API server from etcd storage); type assertions & empty interfaces (`interface{}`/`any`, safe conversion). Milestone: mock API server where an in-memory map store and a JSON-file store implement the same `Store` interface.
-   - Phase 3, Cloud-native core, concurrency & context: goroutines; channels; sync (WaitGroup, Mutex, RWMutex); `context` (values, cancellation, deadlines; `ctx context.Context` everywhere in K8s). Milestone: concurrent worker pool fetching many HTTP endpoints with a global `context.WithTimeout`.
-   - Phase 4, Networking & RPC: net/http servers and clients; JSON/YAML processing; Protobuf & gRPC (used by Istio, containerd, Kubernetes). Milestone: gRPC client streaming "metrics" to a server that aggregates them.
-   - Phase 5, Bridging Go and Kubernetes: client-go (list Pods/Deployments, watch events); informers & caches; CRDs. Milestone: client-go program that watches the cluster and logs every Pod failure or crash.
-   - Phase 6, Operators & CNCF architecture: controller pattern (observe → analyze → act reconcile loop); Kubebuilder / Operator SDK; reading CNCF code (kubelet / ReplicaSet controller, istiod watching Services to build Envoy config, Cilium turning NetworkPolicies into eBPF). Milestone: Kubebuilder operator that injects a sidecar container or labels into Deployments based on a custom resource.
-   - Give every Go topic a diagram too (e.g. slice header → backing array, stack vs heap pointers, interface value = type + data, goroutines/channels fan-out, context cancellation tree, gRPC streaming, informer → cache → workqueue → reconcile).
+Done: CKS diagrams (`site/js/cks/visuals.js`, one per topic), and the Go course (`site/go.html`, 6 phases, 26 topics including 6 milestone projects, each with a diagram). "Go" is in the course switcher on all three pages.
+
+Still to do:
+
+1. **Check links from an unrestricted network.** The sandbox these changes were made in blocked most documentation hosts. Verified 200: GitHub pages, ubuntu.com, pkg.go.dev, dl.k8s.io and the lab download URLs. Not yet verified: 85 of 91 CKS reference links and 77 of 124 Go links (kubernetes.io, go.dev, falco.org, istio.io, grpc.io, book.kubebuilder.io, …). Extract the URLs from `site/js/cks/*.js` and `site/js/go/*.js` and fix any that don't return 200 (`curl -sL -o /dev/null -w '%{http_code}'`).
+2. **Run the cluster labs on kind.** Every Go lab was run, and its output compared with the Verify line. Labs tagged `kind cluster` ran against an envtest API server (kube-apiserver + etcd, no kubelet), because nested containers don't work in that sandbox. So Pods never started there: the client-go list showed `ready=0`, and podwatch's failure detection was checked by patching Pod status by hand. Re-run phases 5–6 on a real kind cluster to confirm the running-Pod parts of the Verify lines.
+3. **Keep versions current.** Go labs pin `protoc` 32.1 and kubebuilder 4.16.0 and use `@latest` for Go modules; recent gRPC and Kubernetes modules need Go ≥ 1.25.
+
+### Testing Go labs
+
+Each lab's step commands form a bash script: steps whose description starts with "Reference layout" are file trees, not commands. Run a lab's steps in a fresh `HOME` and compare the output with its `verify` text; also run `gofmt -l` and `go vet ./...` on the result. Write `\\n` (not `\n`) inside Go strings in the JS template literals, and escape Go backticks (struct tags, raw strings) as `` \` ``.
 
 ## Verification before you finish
 

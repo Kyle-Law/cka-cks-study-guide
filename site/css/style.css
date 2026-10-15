@@ -33,7 +33,7 @@ ul.points li{margin:6px 0}
 .step{margin:10px 0}
 pre{position:relative;margin:6px 0;padding:12px 14px;background:var(--code);color:var(--codefg);border-radius:8px;overflow:auto;font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace}
 pre button{position:absolute;top:6px;right:6px;font-size:12px;padding:2px 8px;opacity:.7}
-code{font:.9em ui-monospace,Menlo,monospace;background:var(--card);padding:1px 5px;border-radius:4px}
+code{overflow-wrap:anywhere;font:.9em ui-monospace,Menlo,monospace;background:var(--card);padding:1px 5px;border-radius:4px}
 pre code{background:none;padding:0}
 .lab h3{margin:0 0 4px}
 .verify{border-left:3px solid var(--ok);padding-left:12px;margin-top:12px}
@@ -58,7 +58,7 @@ details.deep[open] summary{margin-bottom:6px}
 .q{margin:14px 0;padding:16px 18px;border:1px solid var(--line);border-radius:12px}
 .qtext{margin:0 0 10px}
 .opts{display:grid;gap:8px}
-.opt{text-align:left;padding:10px 14px;background:var(--bg);line-height:1.45}
+.opt{min-width:0;overflow-wrap:anywhere;text-align:left;padding:10px 14px;background:var(--bg);line-height:1.45}
 .opt:hover:not(:disabled){border-color:var(--accent)}
 .opt:disabled{cursor:default;color:var(--fg)}
 .opt.right{border-color:var(--ok);background:var(--okbg)}
@@ -115,3 +115,10 @@ details.deep[open] summary{margin-bottom:6px}
 .courses{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;flex:none}
 .courses a{padding:5px 10px;font-size:13px;font-weight:600;text-decoration:none;color:var(--muted)}
 .courses a.on{background:var(--accent);color:#fff}
+/* Phones: the course switcher and search no longer fit on one row */
+@media(max-width:560px){
+ .top{flex-wrap:wrap;row-gap:8px;gap:8px}
+ .brand{flex:1 1 0;min-width:0;overflow:hidden;text-overflow:ellipsis}
+ #search{order:9;flex:1 1 100%}
+ nav{top:100px;height:calc(100vh - 100px)}
+}
