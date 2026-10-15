@@ -82,7 +82,8 @@
 
   function visual(t) {
     const v = (window.COURSE_VISUALS || {})[t.id];
-    return v ? `<figure class="visual"><div class="visual-scroll">${v.svg}</div><figcaption>${inline(v.caption)}</figcaption></figure>` : '';
+    // The caption names the diagram for screen readers (role="img" needs an accessible name).
+    return v ? `<figure class="visual"><div class="visual-scroll">${v.svg.replace('<svg ', '<svg aria-labelledby="visual-caption" ')}</div><figcaption id="visual-caption">${inline(v.caption)}</figcaption></figure>` : '';
   }
 
   function learn(t) {

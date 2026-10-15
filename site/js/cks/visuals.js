@@ -179,7 +179,7 @@
     const sc = B(190, 50, 160, 64, 'seccomp', ['which syscalls?', 'RuntimeDefault'], 'acc');
     const aa = B(400, 50, 160, 64, 'AppArmor', ['which files, caps,', 'network?'], 'acc');
     const k = B(610, 50, 140, 64, 'Host kernel', ['shared by all', 'containers']);
-    const b1 = B(190, 160, 160, 50, 'Blocked', ['unshare, ptrace…'], 'bad');
+    const b1 = B(190, 160, 160, 50, 'Blocked', ['mount, keyctl, kexec…'], 'bad');
     const b2 = B(400, 160, 160, 50, 'Denied', ['write /etc, raw net'], 'bad');
     V['sh-kernel'] = {
       caption: 'Containers share the host kernel. seccomp filters the syscall itself; AppArmor checks what the call touches.',

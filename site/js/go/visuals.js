@@ -253,7 +253,7 @@
   {
     const api = B(10, 40, 130, 64, 'API server', []);
     const refl = B(180, 40, 130, 64, 'Reflector', ['List + Watch']);
-    const fifo = B(350, 40, 120, 64, 'DeltaFIFO', []);
+    const fifo = B(350, 40, 120, 64, 'FIFO queue', ['RealFIFO']);
     const idx = B(510, 40, 240, 64, 'Indexer (cache)', ['read by listers'], 'acc');
     const hd = B(510, 150, 240, 56, 'event handlers', ['Add / Update / Delete']);
     const q = B(270, 250, 180, 56, 'workqueue', ['namespace/name keys'], 'acc');

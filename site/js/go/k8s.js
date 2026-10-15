@@ -187,7 +187,7 @@ sleep 2; kill $!`]
         ]
       },
       points: [
-        "Inside an informer: Reflector (ListAndWatch) → DeltaFIFO → Indexer (a thread-safe store) → your handlers.",
+        "Inside an informer: Reflector (ListAndWatch) → a FIFO queue of changes → Indexer (a thread-safe store) → your handlers. The queue is `RealFIFO`, which keeps events in order; it became the default in client-go 1.33 and the only option in 1.36. Older code and articles show `DeltaFIFO`.",
         "`SharedInformerFactory` gives one informer per resource type that all parts of your program share, so there's one watch per type instead of many.",
         "The resync period re-delivers Update events for every cached object from the cache (it does not re-list from the API). Handy for periodic reconciliation.",
         "`DeleteFunc` may receive a `cache.DeletedFinalStateUnknown` tombstone if a delete was missed; `cache.DeletionHandlingMetaNamespaceKeyFunc` handles it.",
