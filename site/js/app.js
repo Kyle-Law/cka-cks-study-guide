@@ -50,18 +50,18 @@
   function home() {
     $('#main').innerHTML = `
       <h1>${course.title}</h1>
-      <p>Every topic of the ${course.name} curriculum, each with <b>key learning points</b>, a <b>diagram</b>, <b>hands-on labs</b>, a <b>quiz</b>, and <b>links to the official docs</b>.</p>
+      <p>${course.intro || `Every topic of the ${course.name} curriculum, each with <b>key learning points</b>, a <b>diagram</b>, <b>hands-on labs</b>, a <b>quiz</b>, and <b>links to the official docs</b>.`}</p>
       <div class="grid">${domains.map(d => `
         <a class="card" href="#/${d.topics[0].id}">
           <div class="weight">${d.weight}%</div><b>${esc(d.title)}</b>
           <div class="meta">${d.topics.length} topics</div></a>`).join('')}
       </div>
       <h2>How each topic works</h2>
-      <div class="card"><ol class="points">
+      <div class="card"><ol class="points">${course.howto || `
         <li><b>Read "In a nutshell" and the key ideas.</b> They explain the topic in plain language. Open "Exam details" once the basics make sense.</li>
         <li><b>Do the lab</b> on a practice cluster. Run the steps in order, then check the "Verify" line.</li>
         <li><b>Take the quiz.</b> You get instant feedback and an explanation for every answer. Your best score appears in the sidebar.</li>
-        <li><b>Skim the official docs</b>. On the exam, kubernetes.io is the only reference you're allowed.</li>
+        <li><b>Skim the official docs</b>. On the exam, kubernetes.io is the only reference you're allowed.</li>`}
       </ol></div>
       ${course.home}
       <h2>My notes</h2>
@@ -94,7 +94,7 @@
       <ul class="ideas">${b.ideas.map(x => `<li>${inline(x)}</li>`).join('')}</ul>` : '';
     return `${intro}
       <details class="deep"${b ? '' : ' open'}>
-        <summary>Exam details: ${t.points.length} points to know once the basics make sense</summary>
+        <summary>${course.detailsLabel || 'Exam details'}: ${t.points.length} points to know once the basics make sense</summary>
         <ul class="points">${t.points.map(p => `<li>${inline(p)}</li>`).join('')}</ul>
       </details>`;
   }
@@ -152,7 +152,7 @@
     const t = all[i], prev = all[i - 1], next = all[i + 1];
     const nq = (quizzes[t.id] || []).length;
     $('#main').innerHTML = `
-      <div class="meta">${esc(t.domain.title)} · ${t.domain.weight}% of exam</div>
+      <div class="meta">${esc(t.domain.title)} · ${t.domain.weight}% ${course.weightLabel || 'of exam'}</div>
       <h1>${esc(t.title)}</h1>
       <div class="toc">
         <button data-go="s-learn">1. Learn</button>
