@@ -180,7 +180,7 @@ kubectl get svc demo`]
         ['Ports and Protocols', 'https://kubernetes.io/docs/reference/networking/ports-and-protocols/'],
         ['Service types', 'https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types'],
         ['Network Policies', 'https://kubernetes.io/docs/concepts/services-networking/network-policies/'],
-        ['Ubuntu: UFW firewall', 'https://documentation.ubuntu.com/server/how-to/security/firewalls/']
+        ['Ubuntu: UFW firewall', 'https://ubuntu.com/server/docs/how-to/security/firewalls/']
       ],
       quiz: [
         { q: "Which Service type keeps an app reachable only from inside the cluster?",
