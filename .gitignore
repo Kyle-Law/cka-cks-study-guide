@@ -1,1 +1,3 @@
 .DS_Store
+# Source books and PDFs stay local (copyrighted)
+*.pdf

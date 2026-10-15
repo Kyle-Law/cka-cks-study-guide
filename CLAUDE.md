@@ -24,7 +24,7 @@ A static, dependency-free study site in `site/`. Open `site/index.html` (CKA), `
 ```
 
 - CKA keeps these parts in separate files: `site/js/data/<domain>.js` (topics), `site/js/data/basics.js`, `site/js/quiz/<domain>.js`, `site/js/data/visuals.js`, `site/js/data/course.js`.
-- CKS keeps each topic's parts together: `site/js/cks/{setup,system,supply}.js` call `COURSE.addDomain({...})` (defined in `site/js/cks/course.js`), which moves `basics` and `quiz` into the shared maps. **Use the CKS pattern for new courses.** The Go course follows it: `site/js/go/{course,fundamentals,interfaces,concurrency,networking,k8s,operators,visuals}.js`.
+- CKS keeps each topic's parts together: `site/js/cks/{setup,system,supply}.js` call `COURSE.addDomain({...})` (defined in `site/js/cks/course.js`), which moves `basics` and `quiz` into the shared maps. **Use the CKS pattern for new courses.** The Go course follows it: `site/js/go/{course,fundamentals,interfaces,concurrency,networking,k8s,operators,visuals}.js`. So does the Cilium course: `site/js/cilium/{course,foundations,networking,traffic,connectivity,security,operations,visuals}.js` (page `site/cilium.html`).
 - Inline text supports `` `code` `` and `**bold**` only (see `inline()` in `app.js`).
 
 ### Diagrams
@@ -42,6 +42,10 @@ A static, dependency-free study site in `site/`. Open `site/index.html` (CKA), `
 ## Status and remaining work
 
 Done: CKS diagrams (`site/js/cks/visuals.js`, one per topic), and the Go course (`site/go.html`, 6 phases, 26 topics including 6 milestone projects, each with a diagram). "Go" is in the course switcher on all three pages.
+
+Also done: the Cilium course (`site/cilium.html`), a study companion to the book *Cilium: Up and Running* (O'Reilly): 16 chapters grouped into 6 parts, 26 topics, 29 labs, 130 questions, one diagram per topic. All text is original study material; weights are each part's share of the book's pages. Its links were checked from an unrestricted network. The switcher now has CKA · CKS · Go · Cilium on all four pages.
+
+**Never commit source books or PDFs.** `*.pdf` is in `.gitignore`; the book PDF in the repo folder is copyrighted and stays local.
 
 Still to do:
 
