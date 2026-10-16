@@ -7,6 +7,7 @@ A static, dependency-free study site in `site/`. Open `site/index.html` (CKA), `
 - `site/js/app.js` is a course-agnostic engine. Each page sets `window.COURSE` (title, domain `order`, home-page HTML, footer, `id`) and loads that course's data before `app.js`.
 - Data globals: `COURSE_DOMAINS` (domains → topics), `COURSE_BASICS` (per-topic intro), `COURSE_QUIZZES` (per-topic quiz), `COURSE_VISUALS` (per-topic diagram).
 - localStorage keys are `<course.id>-done`, `-quiz` and `-notes`. The theme key `cka-theme` is shared by all courses on purpose. Don't rename keys: users have saved notes under them.
+- Cross-device sync is optional (`site/js/sync.js`, the ☁ button). With a gist-scoped GitHub token it merges `<id>-done`, `-quiz` and `-notes` with a private gist (one `<id>.json` file per course, found by its description). `<id>-stamps` holds per-topic edit times so the newest note or completed flag wins; quiz keeps the higher best. `study-sync-token` and `study-sync-gist` are shared by all courses. After saving a change, `app.js` calls `SYNC.touch(kind, topicId)`; when a download changes data, sync calls `reload()` in `app.js`.
 - Optional `COURSE` fields `intro`, `howto` (HTML `<li>` items), `weightLabel` (default `of exam`) and `detailsLabel` (default `Exam details`) replace the exam wording; the Go course uses them because it is a learning path, not an exam.
 - Every topic page shows: My notes → 1. Key learning points (nutshell, diagram, key ideas, collapsible "Exam details") → 2. Labs → 3. Official docs → 4. Quiz.
 

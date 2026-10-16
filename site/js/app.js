@@ -65,7 +65,7 @@
       </ol></div>
       ${course.home}
       <h2>My notes</h2>
-      <p>Each topic has a notes box at the top of the page. Notes are stored in this browser only, so download a copy now and then.</p>
+      <p>Each topic has a notes box at the top of the page. Notes are stored in this browser. To see them on your other devices, turn on <b>☁ sync</b> in the top bar. Either way, download a copy now and then.</p>
       <button id="export">⬇ Download all notes (.md)</button>
       <p class="meta">${course.footer}</p>`;
   }
@@ -118,7 +118,7 @@
       const s = $('#score');
       if (answered < quiz.length) { s.innerHTML = `<span class="meta">Answered ${answered} of ${quiz.length}</span>`; return; }
       const prev = scores[t.id];
-      if (!prev || right > prev.best) { scores[t.id] = { best: right, total: quiz.length }; save(key('quiz'), scores); renderNav($('#search').value); }
+      if (!prev || right > prev.best) { scores[t.id] = { best: right, total: quiz.length }; save(key('quiz'), scores); touch('q', t.id); renderNav($('#search').value); }
       const msg = right === quiz.length ? 'Perfect. You know this topic.'
         : right / quiz.length >= 0.6 ? 'Good. Re-read the explanations for the ones you missed.'
         : 'Re-read the key ideas, try the lab, then take the quiz again.';
@@ -175,7 +175,7 @@
       <button class="done-btn" id="done">${done[t.id] ? '✓ Completed (click to undo)' : 'Mark as completed'}</button>
       <div class="pager">${prev ? `<a href="#/${prev.id}">← ${esc(prev.title)}</a>` : '<span></span>'}${next ? `<a href="#/${next.id}">${esc(next.title)} →</a>` : ''}</div>`;
     $('#done').onclick = () => {
-      done[t.id] = !done[t.id]; save(key('done'), done);
+      done[t.id] = !done[t.id]; save(key('done'), done); touch('d', t.id);
       $('#done').textContent = done[t.id] ? '✓ Completed (click to undo)' : 'Mark as completed';
       renderNav($('#search').value);
     };
@@ -187,7 +187,7 @@
     });
     const box = $('#note'), status = $('#note-status');
     box.value = notes[t.id] || '';
-    const fit = () => { box.style.height = 'auto'; box.style.height = Math.max(120, box.scrollHeight + 2) + 'px'; };
+    const fit = () => fitNote(box);
     fit();
     let timer;
     box.oninput = () => {
@@ -196,12 +196,24 @@
       clearTimeout(timer);
       timer = setTimeout(() => {
         if (box.value.trim()) notes[t.id] = box.value; else delete notes[t.id];
-        save(key('notes'), notes);
+        save(key('notes'), notes); touch('n', t.id);
         status.textContent = 'Saved ✓';
         renderNav($('#search').value);
       }, 400);
     };
     renderQuiz(t, 0);
+  }
+
+  const fitNote = box => { box.style.height = 'auto'; box.style.height = Math.max(120, box.scrollHeight + 2) + 'px'; };
+  const touch = (kind, id) => window.SYNC && SYNC.touch(kind, id);
+
+  // A sync download changed this browser's data: reload it and refresh what's on screen without losing scroll or quiz state.
+  function reload() {
+    done = load(key('done')); scores = load(key('quiz')); notes = load(key('notes'));
+    renderNav($('#search').value);
+    const id = location.hash.replace('#/', ''), box = $('#note'), btn = $('#done');
+    if (box && document.activeElement !== box) { box.value = notes[id] || ''; fitNote(box); }
+    if (btn) btn.textContent = done[id] ? '✓ Completed (click to undo)' : 'Mark as completed';
   }
 
   function exportNotes() {
@@ -231,4 +243,5 @@
   };
   window.addEventListener('hashchange', route);
   route();
+  if (window.SYNC) SYNC.init(course.id, reload);
 })();

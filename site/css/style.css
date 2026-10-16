@@ -122,3 +122,13 @@ details.deep[open] summary{margin-bottom:6px}
  #search{order:9;flex:1 1 100%}
  nav{top:100px;height:calc(100vh - 100px)}
 }
+/* Cross-device sync (js/sync.js) */
+#sync.sync-off{color:var(--muted)}
+#sync.sync-ok{color:var(--ok);border-color:var(--ok)}
+#sync.sync-busy{color:var(--accent);border-color:var(--accent)}
+#sync.sync-err{color:var(--bad);border-color:var(--bad)}
+#sync-dialog{width:min(460px,calc(100% - 32px));box-sizing:border-box;padding:18px 22px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:12px}
+#sync-dialog::backdrop{background:rgba(0,0,0,.45)}
+#sync-dialog h3{margin-top:0}
+#sync-dialog input{width:100%;box-sizing:border-box;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--fg);font:14px ui-monospace,Menlo,monospace}
+.sync-actions{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
